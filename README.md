@@ -1,0 +1,3 @@
+# MTCrashCaught
+
+闪退的获取通过NSUncaughtExceptionHandler和Unix信号
