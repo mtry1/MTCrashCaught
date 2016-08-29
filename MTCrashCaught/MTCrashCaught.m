@@ -140,7 +140,6 @@ NSString *get_uuid(void)
         }
     }
     return @"";
-    
 }
 
 @end
