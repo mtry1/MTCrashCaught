@@ -9,35 +9,14 @@
 #import "ViewController.h"
 #import "MTCrashCaught.h"
 
-@interface ViewController ()
-
-@end
-
 @implementation ViewController
 
 + (void)load
 {
     [MTCrashCaught installCompletionHandler:^(NSString *exceptionDescription, MTResponseCallback responseCallback) {
-        
-        [ViewController handleExceptionDescriptionData:exceptionDescription completionHandler:^{
-            responseCallback();
-        }];
+        NSLog(@"\n%@", exceptionDescription);
+        responseCallback();
     }];
-}
-
-+ (void)handleExceptionDescriptionData:(NSString *)exceptionDescription completionHandler:(void(^)(void))completionHandler
-{
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyMMddHHmmss"];
-    NSString *creatime = [dateFormatter stringFromDate:[NSDate date]];
-    NSString *filePath = [NSHomeDirectory() stringByAppendingPathComponent:creatime];
-    NSData *exceptionData = [exceptionDescription dataUsingEncoding: NSUTF8StringEncoding];
-    if(exceptionData)
-    {
-        [exceptionData writeToFile:filePath atomically:YES];
-    }
-    
-    completionHandler();
 }
 
 - (void)viewDidLoad
@@ -54,7 +33,7 @@
 
 - (void)touchUpInsideButton:(UIButton *)button
 {
-    [self test2];
+    [self test3];
 }
 
 - (void)test1
@@ -70,6 +49,7 @@
     int b = 0;
     b = a / b;
 }
+
 
 - (void)test3
 {
