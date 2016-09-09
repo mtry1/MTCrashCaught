@@ -14,6 +14,7 @@
 #import <Foundation/Foundation.h>
 
 static MTCompletionHandler exceptionCompletionHandler;
+static NSUncaughtExceptionHandler *previousUncaughtExceptionHandler;
 
 @implementation MTCrashCaught
 
@@ -21,7 +22,9 @@ static MTCompletionHandler exceptionCompletionHandler;
 {
     exceptionCompletionHandler = completionHandler;
     
+    previousUncaughtExceptionHandler = NSGetUncaughtExceptionHandler();
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+    
     signal(SIGABRT, signalExceptionHandler);
     signal(SIGILL,  signalExceptionHandler);
     signal(SIGSEGV, signalExceptionHandler);
@@ -37,13 +40,14 @@ static MTCompletionHandler exceptionCompletionHandler;
         exceptionCompletionHandler = nil;
     }
     
-    NSSetUncaughtExceptionHandler(NULL);
     signal(SIGABRT, SIG_DFL);
     signal(SIGILL,  SIG_DFL);
     signal(SIGSEGV, SIG_DFL);
     signal(SIGFPE,  SIG_DFL);
     signal(SIGBUS,  SIG_DFL);
     signal(SIGPIPE, SIG_DFL);
+    
+    NSSetUncaughtExceptionHandler(previousUncaughtExceptionHandler);
 }
 
 void handleExceptionDescription(NSMutableString *exceptionDescription)
@@ -100,6 +104,11 @@ void uncaughtExceptionHandler(NSException *exception)
     }
     
     handleExceptionDescription(exceptionDescription);
+    
+    if(previousUncaughtExceptionHandler != NULL)
+    {
+        previousUncaughtExceptionHandler(exception);
+    }
 }
 
 #pragma mark - symbolicating
