@@ -68,9 +68,10 @@ void handleExceptionDescription(NSMutableString *exceptionDescription)
     }
     
     NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+    [runLoop addPort:[NSMachPort port] forMode:NSRunLoopCommonModes];
     while(!isFinished)
     {
-        [runLoop runMode:NSRunLoopCommonModes beforeDate:[NSDate distantFuture]];
+        [runLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     }
     
     [MTCrashCaught unInstall];
